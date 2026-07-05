@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - Example Shop</title>
+  <style>
+    :root{
+      --bg:#0f1724;
+      --card:#0b1220;
+      --muted:#94a3b8;
+      --accent:#7c3aed;
+      --accent-2:#06b6d4;
+      --glass: rgba(255,255,255,0.04);
+      --glass-2: rgba(255,255,255,0.02);
+      --success:#10b981;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;color:#e6eef8;background:
+      radial-gradient(1200px 600px at 10% 10%, rgba(124,58,237,0.12), transparent 6%),
+      radial-gradient(900px 400px at 90% 90%, rgba(6,182,212,0.08), transparent 8%),
+      var(--bg);
+      -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+    }
+
+    /* layout */
+    .wrap{display:grid;grid-template-columns:320px 1fr;gap:28px;max-width:1100px;margin:48px auto;padding:28px;}
+    @media (max-width:900px){ .wrap{grid-template-columns:1fr; padding:18px} .sidebar{order:2} .main{order:1} }
+
+    /* sidebar */
+    .sidebar{background:linear-gradient(180deg,var(--card), rgba(11,18,32,0.88));border-radius:14px;padding:20px;box-shadow:0 10px 30px rgba(2,6,23,0.6);min-height:420px;position:relative;overflow:hidden}
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:18px}
+    .logo{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:700;color:white;box-shadow:0 6px 18px rgba(12,8,50,0.5)}
+    .brand h1{font-size:18px;color:#fff;letter-spacing:0.2px}
+    .brand p{font-size:12px;color:var(--muted);margin-top:2px}
+
+    .stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 18px;}
+    .stat{background:linear-gradient(180deg, rgba(255,255,255,0.02), var(--glass));padding:12px;border-radius:10px}
+    .stat .num{font-size:20px;color:var(--accent);font-weight:700}
+    .stat .title{font-size:12px;color:var(--muted);margin-top:6px}
+
+    .features{display:grid;gap:10px;margin-top:6px}
+    .feature{display:flex;gap:12px;align-items:center;padding:10px;border-radius:10px;background:var(--glass-2);border:1px solid rgba(255,255,255,0.02)}
+    .feature .icon{width:36px;height:36px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;color:var(--accent);font-weight:700}
+    .feature strong{font-size:13px;color:#fff}
+    .feature span{display:block;font-size:12px;color:var(--muted)}
+
+    .hint{margin-top:18px;font-size:12px;color:var(--muted);line-height:1.4}
+    .hint code{background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:6px;color:#cfe8ff}
+
+    /* main / login */
+    .main{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:28px;border-radius:14px;box-shadow:0 10px 30px rgba(3,6,23,0.6);min-height:420px;display:flex;flex-direction:column;justify-content:center}
+    .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}
+    .topbar h2{color:#fff;font-size:18px}
+    .topbar p{color:var(--muted);font-size:13px}
+
+    .card{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start}
+    @media (max-width:900px){ .card{grid-template-columns:1fr} }
+
+    .panel{background:linear-gradient(180deg,var(--glass),transparent);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,0.03)}
+    .login-box{padding:18px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));}
+    .field{margin-bottom:14px}
+    label{display:block;font-size:12px;color:var(--muted);margin-bottom:6px}
+    input[type="text"], input[type="password"]{width:100%;padding:12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#eaf4ff;outline:none;box-shadow:inset 0 1px 0 rgba(255,255,255,0.02)}
+    input[type="text"]::placeholder{color:#98a8bf}
+    button.cta{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:white;padding:12px 16px;border:none;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 8px 22px rgba(124,58,237,0.18);transition:transform .14s ease,box-shadow .14s}
+    button.cta:hover{transform:translateY(-3px);box-shadow:0 18px 40px rgba(6,182,212,0.12)}
+    .secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);padding:10px;border-radius:8px;cursor:pointer}
+
+    .meta{font-size:13px;color:var(--muted);margin-top:12px}
+    .links{display:flex;gap:8px;margin-top:12px}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03);font-size:12px;color:var(--muted)}
+
+    /* fancy footer */
+    footer{margin-top:20px;color:var(--muted);font-size:12px;text-align:center}
+    .sparkle{position:absolute;right:-60px;top:-40px;width:260px;height:260px;border-radius:50%;background:radial-gradient(circle at 20% 30%, rgba(124,58,237,0.14), transparent 10%), radial-gradient(circle at 80% 80%, rgba(6,182,212,0.08), transparent 8%);filter:blur(24px)}
+    .shadow-line{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,0.03),transparent);margin:16px 0;border-radius:2px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="sidebar">
+      <div class="sparkle" aria-hidden="true"></div>
+      <div class="brand">
+        <div class="logo">NCU</div>
+        <div>
+          <h1>Get Challenge</h1>
+          <p>Platform demo • CTF lab • training</p>
+        </div>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <div class="num">128</div>
+          <div class="title">Active Users</div>
+        </div>
+        <div class="stat">
+          <div class="num">7</div>
+          <div class="title">Challenges</div>
+        </div>
+      </div>
+
+      <div class="features">
+        <div class="feature">
+          <div class="icon">A</div>
+          <div>
+            <strong>Admin Tools</strong>
+            <span>Monitoring & quick actions</span>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="icon">S</div>
+          <div>
+            <strong>Search</strong>
+            <span>Fast full-text search engine</span>
+          </div>
+        </div>
+
+        <div class="feature">
+          <div class="icon">U</div>
+          <div>
+            <strong>Uploads</strong>
+            <span>Image & file management</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hint">
+        <div class="shadow-line"></div>
+        <p></p>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="topbar">
+        <h2>Welcome Back</h2>
+        <p>Masuk untuk mengelola akun dan mengikuti challenge terbaru.</p>
+      </div>
+
+      <div class="card">
+        <div class="panel login-box">
+          <h3 style="color:#fff;margin-bottom:12px">Sign in to your account</h3>
+          <form action="#" method="GET" autocomplete="off">
+            <div class="field">
+              <label for="username">Username</label>
+              <input id="username" name="username" type="text" placeholder="your.username">
+            </div>
+
+            <div class="field">
+              <label for="password">Password</label>
+              <input id="password" name="password" type="password" placeholder="••••••••">
+            </div>
+
+            <div style="display:flex;gap:10px;align-items:center">
+              <button class="cta" type="submit">Login</button>
+              <button class="secondary" type="button" onclick="alert('no real login')">Hint</button>
+            </div>
+
+            <div class="meta">
+              <div style="display:flex;gap:8px;align-items:center;margin-top:10px">
+                <span class="pill">Two-factor ready</span>
+                <span class="pill">SAML / OAuth</span>
+                <span class="pill">Audit logs</span>
+              </div>
+              <div style="margin-top:10px;color:var(--muted)">Belum punya akun? <a style="color:var(--accent)" href="#">Daftar</a></div>
+            </div>
+          </form>
+        </div>
+
+        <aside class="panel" aria-label="Overview">
+          <h4 style="color:#fff;margin-bottom:8px">Quick Overview</h4>
+          <p style="color:var(--muted);font-size:13px;margin-bottom:12px">Lihat sekilas fitur dan status server.</p>
+
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div style="flex:1;min-width:120px;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">
+              <div style="font-size:18px;color:var(--accent);font-weight:700">Up</div>
+              <div style="font-size:12px;color:var(--muted)">Services</div>
+            </div>
+
+            <div style="flex:1;min-width:120px;background:rgba(255,255,255,0.02);padding:10px;border-radius:8px">
+              <div style="font-size:18px;color:var(--success);font-weight:700">99%</div>
+              <div style="font-size:12px;color:var(--muted)">Uptime</div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;color:var(--muted);font-size:13px">
+            <strong>Recent:</strong>
+            <ul style="margin-top:8px;list-style:disc;margin-left:18px;color:var(--muted)">
+              <li>Backup completed</li>
+              <li>New challenge added</li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <footer>
+        © Netclub UGM
+      </footer>
+    </div>
+  </div>
+  <!-- halaman atmin: /admin_wangsaf -->
+</body>
+</html>

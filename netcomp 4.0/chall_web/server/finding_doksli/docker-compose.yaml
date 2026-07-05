@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    container_name: finding_doksli
+    ports:
+      - "8001:4000"
+
+
+

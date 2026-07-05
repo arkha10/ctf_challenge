@@ -1,0 +1,22 @@
+FROM php:8.2-apache-bullseye
+
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      iputils-ping \
+      libcap2-bin \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN if command -v ping >/dev/null 2>&1; then \
+      PING_PATH="$(command -v ping)"; \
+      setcap cap_net_raw+ep "$PING_PATH" || true; \
+    fi
+
+RUN a2enmod rewrite
+
+COPY src/ /var/www/html/
+
+RUN chown -R www-data:www-data /var/www/html \
+ && chmod -R 755 /var/www/html
+
+EXPOSE 80
+

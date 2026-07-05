@@ -1,0 +1,15 @@
+services:
+  pwn-chal:
+    build: .
+    image: medium_pwn
+    restart: unless-stopped
+    ports:
+      - "2002:1337"
+    # runtime limits for docker-compose (standalone)
+    mem_limit: 512m
+    pids_limit: 200
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    shm_size: "64M"

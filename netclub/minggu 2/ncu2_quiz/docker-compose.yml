@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ctf_web_quiz
+    ports:
+      - "81:80"  
+      - "82:81" 
+    volumes:
+      - ./src:/var/www/html
+    restart: unless-stopped

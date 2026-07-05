@@ -1,0 +1,43 @@
+FROM php:8.2-apache-bullseye
+
+RUN apt-get update \
+ && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+      iputils-ping \
+      libcap2-bin \
+ && rm -rf /var/lib/apt/lists/*
+
+RUN if command -v ping >/dev/null 2>&1; then \
+      PING_PATH="$(command -v ping)"; \
+      setcap cap_net_raw+ep "$PING_PATH" || true; \
+    fi
+
+RUN a2enmod rewrite
+
+RUN echo "Listen 80" > /etc/apache2/ports.conf \
+ && echo "Listen 81" >> /etc/apache2/ports.conf
+
+RUN echo '<VirtualHost *:80>\n\
+    DocumentRoot /var/www/html/chall\n\
+    <Directory /var/www/html/chall>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>' > /etc/apache2/sites-available/chall.conf
+
+RUN echo '<VirtualHost *:81>\n\
+    DocumentRoot /var/www/html/submit\n\
+    <Directory /var/www/html/submit>\n\
+        AllowOverride All\n\
+        Require all granted\n\
+    </Directory>\n\
+</VirtualHost>' > /etc/apache2/sites-available/submit.conf
+
+RUN a2ensite chall.conf submit.conf
+
+COPY src/ /var/www/html/
+
+RUN mkdir -p /var/www/html/chall /var/www/html/submit \
+ && chown -R www-data:www-data /var/www/html \
+ && chmod -R 755 /var/www/html
+
+EXPOSE 80 81
